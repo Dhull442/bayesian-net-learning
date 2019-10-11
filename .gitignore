@@ -1,0 +1,4 @@
+*.bif
+Format_Checker.cpp
+parser
+*.dat
