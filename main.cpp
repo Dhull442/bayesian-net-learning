@@ -6,7 +6,7 @@ using namespace std;
 // Our graph consists of a list of nodes where each node is represented as follows:
 class Graph_Node{
 
-private:
+public:
 	string Node_Name;  // Variable name
 	vector<int> Children; // Children of a particular node - these are index of nodes in graph.
 	vector<string> Parents; // Parents of a particular node- note these are names of parents
@@ -71,6 +71,27 @@ public:
         return 1;
     }
 
+		void print(){
+			// cout << "{ "<<this.Node_Name<<","<<<<" -> " << "( Child: )"
+			cout << Node_Name<<" "<<Children.size()<<"->";
+			for(int i=0;i<Children.size();i++){
+				cout <<Children[i]<<",";
+			}
+			cout << " "<< Parents.size()<<"->";
+			for(int i=0;i<Parents.size();i++){
+				cout << Parents[i]<<",";
+			}
+			cout << " "<<nvalues << "->";
+			for(int i=0;i<values.size();i++){
+				cout << values[i]<<",";
+			}
+			cout << " ";
+			for(int i=0;i<CPT.size();i++){
+				cout << CPT[i]<<",";
+			}
+			cout << endl;
+		}
+
 
 
 };
@@ -80,7 +101,7 @@ public:
 class network{
 
 	list <Graph_Node> Pres_Graph;
-
+	string information;
 public:
 	int addNode(Graph_Node node)
 	{
@@ -133,6 +154,47 @@ public:
         return listIt;
     }
 
+		void print(){
+			int i=0;
+			for (list<Graph_Node>::iterator it = Pres_Graph.begin(); it != Pres_Graph.end(); ++it){
+    		cout <<i<<" --> ";
+				it->print();
+				i++;
+
+			}
+		}
+		void print_format(string filename){
+			ofstream file(filename);
+			time_t now = time(0);
+			char* dt = ctime(&now);
+			file << "// Bayesian Network in the Interchange Format\n// Output created "<< dt <<"// Bayesian network\n";
+			file << "network \"Alarm\" { //37 variables and 37 probability distributions\n}"<<endl;
+			// print variables
+			for (list<Graph_Node>::iterator it = Pres_Graph.begin(); it != Pres_Graph.end(); ++it){
+    		file << "variable  "<<it->Node_Name<<" { //"<<it->nvalues<<" values"<<endl;
+				file << "type discrete["<<it->nvalues<<"] { ";
+				for(int i=0;i<it->values.size();i++){
+					file << " " << it->values[i] << " ";
+				}
+				file << " };\n}\n";
+			}
+			// print values
+			for (list<Graph_Node>::iterator it = Pres_Graph.begin(); it != Pres_Graph.end(); ++it){
+				// file << "noth"<<endl;
+				int v = 1;
+				file << "probability (  "<<it->Node_Name<<" ";
+				for(int i=0;i<it->Parents.size();i++){
+					file<<" "<<it->Parents[i]<<" ";
+					v ++;
+				}
+				file <<" ) { //"<<v<<" variable(s) and"<<it->CPT.size()<<" values\n";
+				file <<"\ttable ";
+				for(int i=0;i<it->CPT.size();i++){
+					file << it->CPT[i]<<" ";
+				}
+				file<<";\n}\n";
+			}
+		}
 
 };
 
@@ -142,17 +204,17 @@ network read_network()
 	string line;
 	int find=0;
   	ifstream myfile("alarm.bif");
+	string info = "";
   	string temp;
   	string name;
   	vector<string> values;
-
     if (myfile.is_open())
     {
     	while (! myfile.eof() )
     	{
     		stringstream ss;
       		getline (myfile,line);
-
+					// linenum ++;
 
       		ss.str(line);
      		ss>>temp;
@@ -160,10 +222,10 @@ network read_network()
 
      		if(temp.compare("variable")==0)
      		{
-
      				ss>>name;
      				getline (myfile,line);
-
+						// linenum++;
+						// lastnum = linenum;
      				stringstream ss2;
      				ss2.str(line);
      				for(int i=0;i<4;i++)
@@ -242,7 +304,6 @@ network read_network()
 
 
     	}
-
     	if(find==1)
     	myfile.close();
   	}
@@ -250,13 +311,13 @@ network read_network()
   	return Alarm;
 }
 
-
 int main()
 {
 	network Alarm;
 	Alarm=read_network();
 
 // Example: to do something
-	cout<<"Perfect! Hurrah! \n";
-
+	// cout<<"Perfect! Hurrah! \n";
+	Alarm.print_format("output.bif");
+	// Alarm.print();
 }
