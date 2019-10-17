@@ -3,6 +3,10 @@
 // Format checker just assumes you have Alarm.bif and Solved_Alarm.bif (your file) in current directory
 using namespace std;
 
+
+//String to directly copy in output before writing the probability tables
+string directly_copy_in_output = "";
+
 // Our graph consists of a list of nodes where each node is represented as follows:
 class Graph_Node{
 
@@ -161,18 +165,22 @@ public:
 		ofstream file(filename);
 		time_t now = time(0);
 		char* dt = ctime(&now);
-		file << "// Bayesian Network in the Interchange Format\n// Output created "<< dt <<"// Bayesian network\n";
-		file << "network \"Alarm\" { //37 variables and 37 probability distributions\n}"<<endl;
-		// print variables
-		for (list<Graph_Node>::iterator it = Pres_Graph.begin(); it != Pres_Graph.end(); ++it){
-  		file << "variable  "<<it->Node_Name<<" { //"<<it->nvalues<<" values"<<endl;
-			file << "type discrete["<<it->nvalues<<"] { ";
-			for(int i=0;i<it->values.size();i++){
-				file << " " << it->values[i] << " ";
-			}
-			file << " };\n}\n";
-		}
+		// file << "// Bayesian Network in the Interchange Format\n// Output created "<< dt <<"// Bayesian network\n";
+		// file << "network \"Alarm\" { //37 variables and 37 probability distributions\n}"<<endl;
+		// // print variables
+		// for (list<Graph_Node>::iterator it = Pres_Graph.begin(); it != Pres_Graph.end(); ++it){
+  		// file << "variable  "<<it->Node_Name<<" { //"<<it->nvalues<<" values"<<endl;
+		// 	file << "type discrete["<<it->nvalues<<"] { ";
+		// 	for(int i=0;i<it->values.size();i++){
+		// 		file << " " << it->values[i] << " ";
+		// 	}
+		// 	file << " };\n}\n";
+		// }
 		// print values
+
+		file << directly_copy_in_output;
+
+
 		for (list<Graph_Node>::iterator it = Pres_Graph.begin(); it != Pres_Graph.end(); ++it){
 			// file << "noth"<<endl;
 			int v = 1;
@@ -181,7 +189,7 @@ public:
 				file<<" "<<it->Parents[i]<<" ";
 				v ++;
 			}
-			file <<" ) { //"<<v<<" variable(s) and"<<it->CPT.size()<<" values\n";
+			file <<") { //"<<v<<" variable(s) and "<<it->CPT.size()<<" values\n";
 			file <<"\ttable ";
 			for(int i=0;i<it->CPT.size();i++){
 				file << std::fixed << std::setprecision(4) << it->CPT[i]<<" ";
@@ -221,7 +229,8 @@ network read_network(){
 	string line;
 	int find=0;
 	string info = "";
-	ifstream myfile("alarm.bif");
+	ifstream myfile("resources_given/alarm.bif");
+	bool to_continue_directly_copying = true;
 	string temp;
 	string name;
 	vector<string> values;
@@ -232,9 +241,21 @@ network read_network(){
   		getline (myfile,line);
   		ss.str(line);
    		ss>>temp;
+		bool is_probability = temp.compare("probability")==0;
+		bool to_copy_line = !is_probability && to_continue_directly_copying;
+
+		if(to_copy_line)
+			directly_copy_in_output += line + "\n";
+
+		if(is_probability){
+			to_continue_directly_copying = false;
+		}
+
    		if(temp.compare("variable")==0){
  				ss>>name;
  				getline (myfile,line);
+				if (to_copy_line)
+					directly_copy_in_output += line + "\n";
  				stringstream ss2;
  				ss2.str(line);
  				for(int i=0;i<4;i++){
@@ -248,7 +269,7 @@ network read_network(){
  				Graph_Node new_node(name,values.size(),values);
  				int pos=Alarm.addNode(new_node);
    		}
-   		else if(temp.compare("probability")==0){
+   		else if(is_probability){
  				ss>>temp;
  				ss>>temp;
         list<Graph_Node>::iterator listIt;
@@ -300,7 +321,7 @@ int main()
 
 // Example: to do something
 	// cout<<"Perfect! Hurrah! \n";
-	Alarm.print_format("output.bif");
+	Alarm.print_format("resources_given/solved_alarm.bif");
 	// Alarm.print();
-	// Alarm.process("sample.dat");
+	// Alarm.process("resources_given/records.dat");
 }
