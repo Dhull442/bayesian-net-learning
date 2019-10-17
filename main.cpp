@@ -225,6 +225,7 @@ network read_network(){
 	string temp;
 	string name;
 	vector<string> values;
+	srand(time(0));
   if (myfile.is_open()){
   	while (!myfile.eof()){
   		stringstream ss;
@@ -273,7 +274,14 @@ network read_network(){
         string::size_type sz;
  				while(temp.compare(";")!=0)
  				{
- 					curr_CPT.push_back(atof(temp.c_str()));
+					float v = atof(temp.c_str());
+					if(v<0){
+						// v = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+						// srand (static_cast <unsigned> (time(0)));
+						v = abs(cos(100*sin(rand())));
+						// cout << time(0)<<endl;
+					}
+ 					curr_CPT.push_back(v);
  					ss2>>temp;
 				}
         listIt->set_CPT(curr_CPT);
