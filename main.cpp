@@ -116,29 +116,29 @@ public:
 		return Pres_Graph.size();
 	}
 
-  // get the index of node with a given name
-  int get_index(string val_name){
-    list<Graph_Node>::iterator listIt;
-    int count=0;
-    for(listIt=Pres_Graph.begin();listIt!=Pres_Graph.end();listIt++){
-        if(listIt->get_name().compare(val_name)==0)
-            return count;
-        count++;
-    }
-    return -1;
-  }
+  	// get the index of node with a given name
+	int get_index(string val_name){
+	list<Graph_Node>::iterator listIt;
+	int count=0;
+	for(listIt=Pres_Graph.begin();listIt!=Pres_Graph.end();listIt++){
+		if(listIt->get_name().compare(val_name)==0)
+			return count;
+		count++;
+	}
+	return -1;
+	}
 
 	// get the node at nth index
-  list<Graph_Node>::iterator get_nth_node(int n){
-	  list<Graph_Node>::iterator listIt;
-	  int count=0;
-	  for(listIt=Pres_Graph.begin();listIt!=Pres_Graph.end();listIt++){
-	      if(count==n)
-	          return listIt;
-	      count++;
-	  }
-	  return listIt;
-  }
+  	list<Graph_Node>::iterator get_nth_node(int n){
+		list<Graph_Node>::iterator listIt;
+		int count=0;
+		for(listIt=Pres_Graph.begin();listIt!=Pres_Graph.end();listIt++){
+			if(count==n)
+				return listIt;
+			count++;
+		}
+		return listIt;
+  	}
 
   //get the iterator of a node with a given name
   list<Graph_Node>::iterator search_node(string val_name){
@@ -165,18 +165,6 @@ public:
 		ofstream file(filename);
 		time_t now = time(0);
 		char* dt = ctime(&now);
-		// file << "// Bayesian Network in the Interchange Format\n// Output created "<< dt <<"// Bayesian network\n";
-		// file << "network \"Alarm\" { //37 variables and 37 probability distributions\n}"<<endl;
-		// // print variables
-		// for (list<Graph_Node>::iterator it = Pres_Graph.begin(); it != Pres_Graph.end(); ++it){
-  		// file << "variable  "<<it->Node_Name<<" { //"<<it->nvalues<<" values"<<endl;
-		// 	file << "type discrete["<<it->nvalues<<"] { ";
-		// 	for(int i=0;i<it->values.size();i++){
-		// 		file << " " << it->values[i] << " ";
-		// 	}
-		// 	file << " };\n}\n";
-		// }
-		// print values
 
 		file << directly_copy_in_output;
 
@@ -204,18 +192,13 @@ public:
 			while(!dat.eof()){
 				string line;
 				getline(dat,line);
+				stringstream ss(line);
 				vector< string > vals;
-				while(line.length()>0){
-					string k;
-					if(line.find(' ')<line.length()){
-						k=line.substr(0,line.find(' '));
-						line = line.substr(line.find(' ')+1);
-					}
-					else{
-						k = line;
-						line = "";
-					}
-					vals.push_back(k);
+				string val;
+				while(ss>>val){
+					assert(val.size() >= 2);
+					val = val.substr(1, val.size() - 2);
+					vals.push_back(val);
 				}
 				cout << i <<" -- " <<vals.size() <<endl;
 			}
@@ -235,66 +218,66 @@ network read_network(){
 	string name;
 	vector<string> values;
 	srand(time(0));
-  if (myfile.is_open()){
-  	while (!myfile.eof()){
-  		stringstream ss;
-  		getline (myfile,line);
-  		ss.str(line);
-   		ss>>temp;
-		bool is_probability = temp.compare("probability")==0;
-		bool to_copy_line = !is_probability && to_continue_directly_copying;
+	if (myfile.is_open()){
+		while (!myfile.eof()){
+			stringstream ss;
+			getline (myfile,line);
+			ss.str(line);
+			ss>>temp;
+			bool is_probability = temp.compare("probability")==0;
+			bool to_copy_line = !is_probability && to_continue_directly_copying;
 
-		if(to_copy_line)
-			directly_copy_in_output += line + "\n";
+			if(to_copy_line)
+				directly_copy_in_output += line + "\n";
 
-		if(is_probability){
-			to_continue_directly_copying = false;
-		}
+			if(is_probability){
+				to_continue_directly_copying = false;
+			}
 
-   		if(temp.compare("variable")==0){
- 				ss>>name;
- 				getline (myfile,line);
+			if(temp.compare("variable")==0){
+				ss>>name;
+				getline (myfile,line);
 				if (to_copy_line)
 					directly_copy_in_output += line + "\n";
- 				stringstream ss2;
- 				ss2.str(line);
- 				for(int i=0;i<4;i++){
- 					ss2>>temp;
- 				}
- 				values.clear();
- 				while(temp.compare("};")!=0){
- 					values.push_back(temp);
- 					ss2>>temp;
+				stringstream ss2;
+				ss2.str(line);
+				for(int i=0;i<4;i++){
+					ss2>>temp;
 				}
- 				Graph_Node new_node(name,values.size(),values);
- 				int pos=Alarm.addNode(new_node);
-   		}
-   		else if(is_probability){
- 				ss>>temp;
- 				ss>>temp;
-        list<Graph_Node>::iterator listIt;
-        list<Graph_Node>::iterator listIt1;
- 				listIt=Alarm.search_node(temp);
-        int index=Alarm.get_index(temp);
-        ss>>temp;
-        values.clear();
- 				while(temp.compare(")")!=0)
- 				{
-          listIt1=Alarm.search_node(temp);
-          listIt1->add_child(index);
- 					values.push_back(temp);
- 					ss>>temp;
+				values.clear();
+				while(temp.compare("};")!=0){
+					values.push_back(temp);
+					ss2>>temp;
 				}
-        listIt->set_Parents(values);
+				Graph_Node new_node(name,values.size(),values);
+				int pos=Alarm.addNode(new_node);
+			}
+			else if(is_probability){
+				ss>>temp;
+				ss>>temp;
+				list<Graph_Node>::iterator listIt;
+				list<Graph_Node>::iterator listIt1;
+				listIt=Alarm.search_node(temp);
+				int index=Alarm.get_index(temp);
+				ss>>temp;
+				values.clear();
+				while(temp.compare(")")!=0)
+				{
+					listIt1=Alarm.search_node(temp);
+					listIt1->add_child(index);
+					values.push_back(temp);
+					ss>>temp;
+				}
+				listIt->set_Parents(values);
 				getline (myfile,line);
- 				stringstream ss2;
- 				ss2.str(line);
- 				ss2>> temp;
- 				ss2>> temp;
- 				vector<float> curr_CPT;
-        string::size_type sz;
- 				while(temp.compare(";")!=0)
- 				{
+				stringstream ss2;
+				ss2.str(line);
+				ss2>> temp;
+				ss2>> temp;
+				vector<float> curr_CPT;
+				string::size_type sz;
+				while(temp.compare(";")!=0)
+				{
 					float v = atof(temp.c_str());
 					if(v<0){
 						// v = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -302,14 +285,14 @@ network read_network(){
 						v = abs(cos(100*sin(rand())));
 						// cout << time(0)<<endl;
 					}
- 					curr_CPT.push_back(v);
- 					ss2>>temp;
+					curr_CPT.push_back(v);
+					ss2>>temp;
 				}
-        listIt->set_CPT(curr_CPT);
-   		}
-  	}
-  	if(find==1)
-  		myfile.close();
+				listIt->set_CPT(curr_CPT);
+			}
+		}
+		if(find==1)
+			myfile.close();
 	}
 	return Alarm;
 }
@@ -323,5 +306,5 @@ int main()
 	// cout<<"Perfect! Hurrah! \n";
 	Alarm.print_format("resources_given/solved_alarm.bif");
 	// Alarm.print();
-	// Alarm.process("resources_given/records.dat");
+	Alarm.process("resources_given/records.dat");
 }
