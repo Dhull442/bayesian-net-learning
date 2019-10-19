@@ -50,13 +50,20 @@ public:
 
 
 			vector<string> values_of_node = node->values;
+			
+			int node_value_number = node->value_to_int_mapping[sample[i]];
+
 			int n2 = values_of_node.size();
 
 			for(int j=0; j<n2; ++j){
 
 				int cpt_index = node->calculate_cpt_index(values_of_node[j], parent_values, network_to_be_trained);
 
+				(node->CPT[cpt_index]).second += sample_weight;
 
+				if(node_value_number == j + 1){
+					(node->CPT[cpt_index]).first += sample_weight;
+				}
 			}
 
 
@@ -90,6 +97,12 @@ public:
 
 				if(!is_some_value_missing){
 					missing_values_position.push_back(-1);
+				}
+
+
+				if(is_some_value_missing){
+
+					
 				}
 
 				// for(int i=0; i<vals.size(); ++i){

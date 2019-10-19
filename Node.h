@@ -24,7 +24,7 @@ public:
 	std::unordered_map<std::string, int> value_to_int_mapping; // Mapping value strings to integer for easier calculations
 
 	// Constructor- a node is initialised with its name and its categories
-  Node(std::string, int, std::vector<std::string>);
+	Node(std::string, int, std::vector<std::string>);
 	std::string get_name();
 	std::vector<int> get_children();
 	std::vector<std::string> get_Parents();
@@ -32,12 +32,13 @@ public:
 	int get_nvalues();
 	std::vector<std::string> get_values();
 	void set_CPT(std::vector<pdd>&);
-  void set_Parents(std::vector<std::string>&);
+	void set_Parents(std::vector<std::string>&);
 	void set_parent_indices(std::vector<int>&);
-  // add another node in a graph as a child of this node
-  int add_child(int);
+	// add another node in a graph as a child of this node
+	int add_child(int);
 	// Given the values of parents and the network object, return the relevant cpt_index
 	int calculate_cpt_index(std::string,std::vector<std::string>&,network&);
+	// Given the network object and the values of observables, returns the probability using markovian blanket
 	void print();
 };
 
