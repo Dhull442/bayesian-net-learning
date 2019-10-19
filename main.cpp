@@ -8,7 +8,7 @@
 using namespace std;
 
 typedef std::pair<double,double> pdd;
-
+#define PB push_back
 //String to directly copy in output before writing the probability tables
 extern string directly_copy_in_output;
 
@@ -18,6 +18,7 @@ public:
 
 	string filename;
 	network network_to_be_trained;
+	vector< vector<string> > datf;
 
 	// ith element gives the position of missing element in ith row, if no value missing, then gives -1
 	vector<int> missing_values_position;
@@ -25,8 +26,27 @@ public:
 	training_input_reader(string filename, network& network_to_be_trained){
 		this->filename = filename;
 		this->network_to_be_trained = network_to_be_trained;
-
 		initialise_network();
+	}
+
+
+	void update_net(vector< string > sample, double wt){}
+
+	void train_loop(){
+		for(int i=0;i<missing_values_position.size();i++){
+			if(missing_values_position[i]==-1){
+				update_net(datf[i],1);
+			}
+			else{
+				vector< double > tmp = network_to_be_trained.pMarkovian(missing_values_position[i],datf[i]);
+				vector<string> sample = datf[i];
+				for(int j=0;j<tmp.size();j++){
+					sample[missing_values_position[i]] = network_to_be_trained.graph[missing_values_position[i]].vals[j];
+					int wt = tmp[j];
+					update_net(sample,wt);
+				}
+			}
+		}
 	}
 
 	void initialise_network_cpt_by_one_sample(vector<string> sample, double sample_weight){
@@ -50,7 +70,7 @@ public:
 
 
 			vector<string> values_of_node = node->values;
-			
+
 			int node_value_number = node->value_to_int_mapping[sample[i]];
 
 			int n2 = values_of_node.size();
@@ -89,32 +109,22 @@ public:
 					assert(val.size() >= 2);
 					val = val.substr(1, val.size() - 2);
 					if (val == "?"){
-						missing_values_position.push_back(vals.size());
+						missing_values_position.PB(vals.size());
 						is_some_value_missing = true;
 					}
-					vals.push_back(val);	// Question mark is also pushed back, so as to maintain the ordering
+					vals.PB(val);	// Question mark is also pushed back, so as to maintain the ordering
 				}
-
 				if(!is_some_value_missing){
-					missing_values_position.push_back(-1);
+					missing_values_position.PB(-1);
 				}
-
-
-				if(is_some_value_missing){
-
-					
-				}
-
-				// for(int i=0; i<vals.size(); ++i){
-
-
-				// }
-				// cout << i <<" -- " <<vals.size() <<endl;
+				datf.PB(vals)
 			}
 		}
 		dat.close();
 	}
-
+	void print(){
+		network_to_be_trained.print_format("solved_alarm.bif");
+	}
 };
 
 void read_network(network& Alarm,string filename){
@@ -224,7 +234,11 @@ int main(int argc, char** argv){
 	string bifFile(argv[1]);
 	read_network(Alarm,bifFile);
 	string datFile(argv[2]);
-	Alarm.print_format("solved_alarm.bif");
-	// Alarm.print();
-	// training_input_reader training_data_object("resources_given/records.dat", Alarm);
+	training_input_reader t(datFile,Alarm);
+	int i=0;
+	while(i<1000){
+		// Update whole
+		t.train_loop();
+	}
+	t.print();
 }

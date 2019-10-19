@@ -21,7 +21,7 @@ public:
 
 	void print();
 
-	std::vector<double> calculate_probability_from_markovian_blanket(int, std::vector<std::string>&, network &);
+	std::vector<double> pMarkovian(int, std::vector<std::string>&);
 
 	void print_format(std::string );
 };
