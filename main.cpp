@@ -19,7 +19,7 @@ public:
 	string filename;
 	network network_to_be_trained;
 
-	// ith element gives the position of missing element in ith row
+	// ith element gives the position of missing element in ith row, if no value missing, then gives -1
 	vector<int> missing_values_position;
 
 	training_input_reader(string filename, network network_to_be_trained){
@@ -29,13 +29,52 @@ public:
 		initialise_network();
 	}
 
-	void initialise_network(){	// Instead of random initialisation, initialising using a uniform prior
+	void initialise_network_cpt_by_one_sample(vector<string> sample, double sample_weight){
+		// ! Incomplete
+		
+		int n = sample.size();
+		for(int i=0; i<n; ++i){
+
+			Graph_Node* node = &(*network_to_be_trained.get_nth_node(i));
+
+			int num_parents = node->parent_indices.size();
+			vector<string> parent_values(num_parents);
+			for(int j=0; j<num_parents; ++j){
+
+				int index_of_jth_parent = node->parent_indices[j];
+
+				parent_values[j] = sample[index_of_jth_parent];
+
+			}
+
+
+
+			vector<string> values_of_node = node->values;
+			int n2 = values_of_node.size();
+
+			for(int j=0; j<n2; ++j){
+
+				int cpt_index = node->calculate_cpt_index(values_of_node[j], parent_values, network_to_be_trained);
+
+
+			}
+
+
+		}
+		
+
+	}
+
+	void initialise_network(){	// Instead of random initialisation, initialised using a uniform prior
+
+		// ! Incomplete
 		ifstream dat(filename);
 		int i=0;
 		if(dat.is_open()){
 			while(!dat.eof()){
 				string line;
 				getline(dat,line);
+				bool is_some_value_missing = false;
 				stringstream ss(line);
 				vector< string > vals;
 				string val;
@@ -43,15 +82,20 @@ public:
 					assert(val.size() >= 2);
 					val = val.substr(1, val.size() - 2);
 					if (val == "?"){
-						missing_values_position[i] = vals.size(); 
+						missing_values_position.push_back(vals.size());
+						is_some_value_missing = true;
 					}
 					vals.push_back(val);	// Question mark is also pushed back, so as to maintain the ordering
-
-				
-				
-				
-				
 				}
+
+				if(!is_some_value_missing){
+					missing_values_position.push_back(-1);
+				}
+
+				// for(int i=0; i<vals.size(); ++i){
+
+
+				// }
 				// cout << i <<" -- " <<vals.size() <<endl;
 			}
 		}
@@ -133,6 +177,7 @@ network read_network(){
 				}
 				listIt->set_Parents(values);
 				listIt->set_parent_indices(indices_values);
+				int numvalues = listIt->nvalues;
 				getline (myfile,line);
 				stringstream ss2;
 				ss2.str(line);
@@ -149,10 +194,10 @@ network read_network(){
 					// 	v = 0.5;
 					// 	// cout << time(0)<<endl;
 					// }
-					double numerator = v;
-					double denominator  = 1;
+					double numerator = 1;
+					double denominator  = (double)numvalues;
 					curr_CPT.push_back(pdd(numerator, denominator));	//Values given are random only, 
-										//hence any value will suffice here since we ae initialising these values later
+										//hence we make choose intial values from a uniform prior
 					ss2>>temp;
 				}
 				listIt->set_CPT(curr_CPT);

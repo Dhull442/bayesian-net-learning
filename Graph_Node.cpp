@@ -102,7 +102,7 @@ int Graph_Node::calculate_cpt_index(string node_value, vector<string> &parent_va
 
     cpt_index += temp*curr_value;
     
-    return cpt_index - 1;
+    return cpt_index - 1; // Subtracting 1 because the actual index should start from 0
 
 
 }
