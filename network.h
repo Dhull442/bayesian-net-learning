@@ -21,6 +21,8 @@ public:
 
 	void print();
 
+	std::vector<double> calculate_probability_from_markovian_blanket(int, std::vector<std::string>&, network &);
+
 	void print_format(std::string );
 };
 
