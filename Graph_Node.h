@@ -5,6 +5,8 @@
 #include <string>
 #include "network.h"
 
+typedef std::pair<double,double> pdd;
+
 class network;
 
 // Our graph consists of a list of nodes where each node is represented as follows:
@@ -16,7 +18,7 @@ public:
 	std::vector<std::string> Parents; // Parents of a particular node- note these are names of parents
 	int nvalues;  // Number of categories a variable represented by this node can take
 	std::vector<std::string> values; // Categories of possible values
-	std::vector<double> CPT; // conditional probability table as a 1-d array . Look for BIF format to understand its meaning
+	std::vector<pdd> CPT; // conditional probability table as a 1-d array . Written as (numerator, denominator)
 
 	std::vector<int> parent_indices; // Parents of a particular node - these are index of nodes in graph.
 	std::unordered_map<std::string, int> value_to_int_mapping; // Mapping value strings to integer for easier calculations
@@ -31,13 +33,13 @@ public:
 
 	std::vector<std::string> get_Parents();
 
-	std::vector<double> get_CPT();
+	std::vector<pdd> get_CPT();
 
 	int get_nvalues();
 
 	std::vector<std::string> get_values();
 
-	void set_CPT(std::vector<double>);
+	void set_CPT(std::vector<pdd>);
 
     void set_Parents(std::vector<std::string>);
 

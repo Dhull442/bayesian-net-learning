@@ -5,6 +5,8 @@
 
 using namespace std;
 
+typedef pair<double,double> pdd;
+
 // Our graph consists of a list of nodes where each node is represented as follows:
 
 
@@ -35,7 +37,7 @@ vector<string> Graph_Node::get_Parents()
 {
     return Parents;
 }
-vector<double> Graph_Node::get_CPT()
+vector<pdd> Graph_Node::get_CPT()
 {
     return CPT;
 }
@@ -47,7 +49,7 @@ vector<string> Graph_Node::get_values()
 {
     return values;
 }
-void Graph_Node::set_CPT(vector<double> new_CPT)
+void Graph_Node::set_CPT(vector<pdd> new_CPT)
 {
     CPT.clear();
     CPT=new_CPT;
@@ -107,23 +109,23 @@ int Graph_Node::calculate_cpt_index(string node_value, vector<string> &parent_va
 
 void Graph_Node::print(){
     // cout << "{ "<<this.Node_Name<<","<<<<" -> " << "( Child: )"
-    cout << Node_Name<<" "<<Children.size()<<"->";
-    for(int i=0;i<Children.size();i++){
-        cout <<Children[i]<<",";
-    }
-    cout << " "<< Parents.size()<<"->";
-    for(int i=0;i<Parents.size();i++){
-        cout << Parents[i]<<",";
-    }
-    cout << " "<<nvalues << "->";
-    for(int i=0;i<values.size();i++){
-        cout << values[i]<<",";
-    }
-    cout << " ";
-    for(int i=0;i<CPT.size();i++){
-        cout << CPT[i]<<",";
-    }
-    cout << endl;
+    // cout << Node_Name<<" "<<Children.size()<<"->";
+    // for(int i=0;i<Children.size();i++){
+    //     cout <<Children[i]<<",";
+    // }
+    // cout << " "<< Parents.size()<<"->";
+    // for(int i=0;i<Parents.size();i++){
+    //     cout << Parents[i]<<",";
+    // }
+    // cout << " "<<nvalues << "->";
+    // for(int i=0;i<values.size();i++){
+    //     cout << values[i]<<",";
+    // }
+    // cout << " ";
+    // for(int i=0;i<CPT.size();i++){
+    //     cout << CPT[i]<<",";
+    // }
+    // cout << endl;
 }
 
 

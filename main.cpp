@@ -7,9 +7,9 @@
 // Format checker just assumes you have Alarm.bif and Solved_Alarm.bif (your file) in current directory
 using namespace std;
 
+typedef std::pair<double,double> pdd;
+
 //String to directly copy in output before writing the probability tables
-
-
 extern string directly_copy_in_output;
 
 class training_input_reader{
@@ -17,16 +17,19 @@ class training_input_reader{
 public:
 
 	string filename;
+	network network_to_be_trained;
+
 	// ith element gives the position of missing element in ith row
 	vector<int> missing_values_position;
 
-	training_input_reader(string filename){
+	training_input_reader(string filename, network network_to_be_trained){
 		this->filename = filename;
+		this->network_to_be_trained = network_to_be_trained;
 
-		process();
+		initialise_network();
 	}
 
-	void process(){
+	void initialise_network(){	// Instead of random initialisation, initialising using a uniform prior
 		ifstream dat(filename);
 		int i=0;
 		if(dat.is_open()){
@@ -39,10 +42,15 @@ public:
 				while(ss>>val){
 					assert(val.size() >= 2);
 					val = val.substr(1, val.size() - 2);
-					// if (val == "?"){
+					if (val == "?"){
+						missing_values_position[i] = vals.size(); 
+					}
+					vals.push_back(val);	// Question mark is also pushed back, so as to maintain the ordering
 
-					// }
-					vals.push_back(val);
+				
+				
+				
+				
 				}
 				// cout << i <<" -- " <<vals.size() <<endl;
 			}
@@ -130,18 +138,21 @@ network read_network(){
 				ss2.str(line);
 				ss2>> temp;
 				ss2>> temp;
-				vector<double> curr_CPT;
+				vector<pdd> curr_CPT;
 				string::size_type sz;
 				while(temp.compare(";")!=0)
 				{
 					double v = stod(temp);
-					if(v<0){
-						// v = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-						// srand (static_cast <unsigned> (time(0)));
-						v = abs(cos(100*sin(rand())));
-						// cout << time(0)<<endl;
-					}
-					curr_CPT.push_back(v);
+					// if(v<0){
+					// 	// v = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+					// 	// srand (static_cast <unsigned> (time(0)));
+					// 	v = 0.5;
+					// 	// cout << time(0)<<endl;
+					// }
+					double numerator = v;
+					double denominator  = 1;
+					curr_CPT.push_back(pdd(numerator, denominator));	//Values given are random only, 
+										//hence any value will suffice here since we ae initialising these values later
 					ss2>>temp;
 				}
 				listIt->set_CPT(curr_CPT);
@@ -164,5 +175,5 @@ int main()
 	// cout<<"Perfect! Hurrah! \n";
 	Alarm.print_format("resources_given/solved_alarm.bif");
 	// Alarm.print();
-	training_input_reader training_data_object("resources_given/records.dat");
+	// training_input_reader training_data_object("resources_given/records.dat", Alarm);
 }

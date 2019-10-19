@@ -82,7 +82,7 @@ void network::print_format(string filename){
         file <<") { //"<<v<<" variable(s) and "<<it->CPT.size()<<" values\n";
         file <<"\ttable ";
         for(int i=0;i<it->CPT.size();i++){
-            file << std::fixed << std::setprecision(4) << it->CPT[i]<<" ";
+            file << std::fixed << std::setprecision(4) << (double)(it->CPT[i].first)/((it->CPT[i].second))<<" ";
         }
         file<<";\n}\n";
     }
