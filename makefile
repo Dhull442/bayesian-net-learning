@@ -2,7 +2,7 @@
 CXX = g++ -std=c++0x
 
 # Flags
-CXXFLAGS = -Wall -g
+CXXFLAGS = -Wall -g -O3
 
 # Executable name
 OUT = main
@@ -10,19 +10,19 @@ OUT = main
 all: $(OUT)
 
 # Executable
-$(OUT): main.o Graph_Node.o network.o 
-	$(CXX) network.o Graph_Node.o main.o -o $(OUT) $(CXXFLAGS)
+$(OUT): main.o Node.o network.o
+	$(CXX) network.o Node.o main.o -o $(OUT) $(CXXFLAGS)
 
 # Main
-main.o: main.cpp network.h Graph_Node.h
+main.o: main.cpp network.h Node.h
 	$(CXX) -c main.cpp -o $@
 
 # Graph_Node
-Graph_Node.o: Graph_Node.cpp Graph_Node.h network.h
-	$(CXX) -c Graph_Node.cpp -o $@
+Node.o: Node.cpp Node.h network.h
+	$(CXX) -c Node.cpp -o $@
 
 # network
-network.o: network.cpp network.h Graph_Node.h
+network.o: network.cpp network.h Node.h
 	$(CXX) -c network.cpp -o $@
 
 # Clean

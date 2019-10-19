@@ -1,5 +1,5 @@
-#ifndef GRAPH_NODE_H
-#define GRAPH_NODE_H
+#ifndef Node_H
+#define Node_H
 
 #include <vector>
 #include <string>
@@ -10,7 +10,7 @@ typedef std::pair<double,double> pdd;
 class network;
 
 // Our graph consists of a list of nodes where each node is represented as follows:
-class Graph_Node{
+class Node{
 
 public:
 	std::string Node_Name;  // Variable name
@@ -23,40 +23,22 @@ public:
 	std::vector<int> parent_indices; // Parents of a particular node - these are index of nodes in graph.
 	std::unordered_map<std::string, int> value_to_int_mapping; // Mapping value strings to integer for easier calculations
 
-public:
 	// Constructor- a node is initialised with its name and its categories
-    Graph_Node(std::string, int, std::vector<std::string>);
-	
+  Node(std::string, int, std::vector<std::string>);
 	std::string get_name();
-
 	std::vector<int> get_children();
-
 	std::vector<std::string> get_Parents();
-
 	std::vector<pdd> get_CPT();
-
 	int get_nvalues();
-
 	std::vector<std::string> get_values();
-
-	void set_CPT(std::vector<pdd>);
-
-    void set_Parents(std::vector<std::string>);
-
-	void set_parent_indices(std::vector<int> );
-
-    // add another node in a graph as a child of this node
-    int add_child(int);
-
+	void set_CPT(std::vector<pdd>&);
+  void set_Parents(std::vector<std::string>&);
+	void set_parent_indices(std::vector<int>&);
+  // add another node in a graph as a child of this node
+  int add_child(int);
 	// Given the values of parents and the network object, return the relevant cpt_index
-	int calculate_cpt_index(std::string, std::vector<std::string> &, network &);
-		
-
+	int calculate_cpt_index(std::string,std::vector<std::string>&,network&);
 	void print();
-	
-
-
-
 };
 
 #endif

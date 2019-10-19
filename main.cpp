@@ -1,5 +1,5 @@
 #include "network.h"
-#include "Graph_Node.h"
+#include "Node.h"
 
 
 #include <bits/stdc++.h>
@@ -22,7 +22,7 @@ public:
 	// ith element gives the position of missing element in ith row, if no value missing, then gives -1
 	vector<int> missing_values_position;
 
-	training_input_reader(string filename, network network_to_be_trained){
+	training_input_reader(string filename, network& network_to_be_trained){
 		this->filename = filename;
 		this->network_to_be_trained = network_to_be_trained;
 
@@ -31,11 +31,11 @@ public:
 
 	void initialise_network_cpt_by_one_sample(vector<string> sample, double sample_weight){
 		// ! Incomplete
-		
+
 		int n = sample.size();
 		for(int i=0; i<n; ++i){
 
-			Graph_Node* node = &(*network_to_be_trained.get_nth_node(i));
+			Node* node = &network_to_be_trained.graph[i];
 
 			int num_parents = node->parent_indices.size();
 			vector<string> parent_values(num_parents);
@@ -61,7 +61,7 @@ public:
 
 
 		}
-		
+
 
 	}
 
@@ -104,19 +104,17 @@ public:
 
 };
 
-network read_network(){
-	network Alarm;
+void read_network(network& Alarm,string filename){
 	string line;
 	int find=0;
 	string info = "";
-	ifstream myfile("resources_given/alarm.bif");
+	ifstream myfile(filename);
 	bool to_continue_directly_copying = true;
 	string temp;
 	string name;
 	vector<string> values;
 	srand(time(0));
-
-	map<string, int> parent_name_index_map; 
+	map<string, int> parent_name_index_map;
 
 	if (myfile.is_open()){
 		while (!myfile.eof()){
@@ -149,19 +147,17 @@ network read_network(){
 					values.push_back(temp);
 					ss2>>temp;
 				}
-				Graph_Node new_node(name,values.size(),values);
-				
+				Node new_node(name,values.size(),values);
+
 				int pos=Alarm.addNode(new_node);
-				
+
 				//Updating the map
 				parent_name_index_map[name] = pos;
 			}
 			else if(is_probability){
 				ss>>temp;
 				ss>>temp;
-				list<Graph_Node>::iterator listIt;
-				list<Graph_Node>::iterator listIt1;
-				listIt=Alarm.search_node(temp);
+				// listIt=Alarm.search_node(temp);
 				int index=Alarm.get_index(temp);
 				ss>>temp;
 				values.clear();
@@ -169,15 +165,16 @@ network read_network(){
 				vector<int> indices_values;
 				while(temp.compare(")")!=0)
 				{
-					listIt1=Alarm.search_node(temp);
-					listIt1->add_child(index);
+					// listIt1=Alarm.search_node(temp);
+					int index1 = Alarm.get_index(temp);
+					Alarm.graph[index1].add_child(index);
 					values.push_back(temp);
 					indices_values.push_back(parent_name_index_map[temp]);
 					ss>>temp;
 				}
-				listIt->set_Parents(values);
-				listIt->set_parent_indices(indices_values);
-				int numvalues = listIt->nvalues;
+				Alarm.graph[index].set_Parents(values);
+				Alarm.graph[index].set_parent_indices(indices_values);
+				int numvalues = Alarm.graph[index].nvalues;
 				getline (myfile,line);
 				stringstream ss2;
 				ss2.str(line);
@@ -196,29 +193,25 @@ network read_network(){
 					// }
 					double numerator = 1;
 					double denominator  = (double)numvalues;
-					curr_CPT.push_back(pdd(numerator, denominator));	//Values given are random only, 
+					curr_CPT.push_back(pdd(numerator, denominator));	//Values given are random only,
 										//hence we make choose intial values from a uniform prior
 					ss2>>temp;
 				}
-				listIt->set_CPT(curr_CPT);
+				Alarm.graph[index].set_CPT(curr_CPT);
 			}
 		}
 		if(find==1)
 			myfile.close();
 	}
-	return Alarm;
 }
 
-
-
-int main()
-{
+int main(int argc, char** argv){
+	assert(argc==3);
 	network Alarm;
-	Alarm=read_network();
-
-// Example: to do something
-	// cout<<"Perfect! Hurrah! \n";
-	Alarm.print_format("resources_given/solved_alarm.bif");
+	string bifFile(argv[1]);
+	read_network(Alarm,bifFile);
+	string datFile(argv[2]);
+	Alarm.print_format("solved_alarm.bif");
 	// Alarm.print();
 	// training_input_reader training_data_object("resources_given/records.dat", Alarm);
 }

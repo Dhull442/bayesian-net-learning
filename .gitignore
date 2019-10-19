@@ -1,4 +1,6 @@
 *.bif
 *.dat
+*.o
 main
 Format_Checker
+.vscode/*
