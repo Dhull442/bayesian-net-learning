@@ -1,11 +1,4 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <list>
-#include <fstream>
-#include <sstream>
-#include <cstdlib>
-#include <math.h>
+#include <bits/stdc++.h>
 
 
 using namespace std;
@@ -101,7 +94,7 @@ public:
         {
             if(count++==i)
                 break;
-            
+
         }
         return listIt;
     }
@@ -132,7 +125,7 @@ public:
                 return listIt;
             count++;
         }
-        return listIt; 
+        return listIt;
     }
 
     list<Graph_Node>::iterator search_node(string val_name)
@@ -143,11 +136,11 @@ public:
             if(listIt->get_name().compare(val_name)==0)
                 return listIt;
         }
-    
+
             cout<<"node not found\n";
         return listIt;
     }
-	
+
 
 };
 
@@ -156,7 +149,7 @@ void check_format()
 	network Alarm;
 	string line,testline;
 	int find=0;
-  	ifstream myfile("alarm.bif"); 
+  	ifstream myfile("alarm.bif");
     ifstream testfile("solved_alarm.bif");
   	string temp;
   	string name;
@@ -167,13 +160,13 @@ void check_format()
 
     	while (! myfile.eof() )
     	{
-    		
-      		getline (myfile,line);
-      		
-      		
-      		
 
-            
+      		getline (myfile,line);
+
+
+
+
+
             getline (testfile,testline);
             if(testline.compare(line)!=0)
             {
@@ -184,13 +177,13 @@ void check_format()
             stringstream ss;
             ss.str(line);
             ss>>temp;
-     		
-     		
-     		
+
+
+
      		if(temp.compare("probability")==0)
      		{
                     string test_temp;
-                    
+
     				getline (myfile,line);
                     getline (testfile,testline);
 
@@ -220,8 +213,8 @@ void check_format()
                         //cout<<"here"<<temp<<"\n";
      					ss2>>temp;
                         testss2>>test_temp;
-                       
-                        
+
+
 
     				}
                     if(test_temp.compare(";")!=0)
@@ -232,25 +225,25 @@ void check_format()
                     line_count++;
 
      		}
-            
-     		
-     		
 
-    		
+
+
+
+
     		//myfile.close();
     	}
         if(!testfile.eof())
         {
             cout<<" Test File contains more lines\n";
                         exit(0);
-        }   
+        }
     	//cout<<line;
     	//if(find==1)
     	myfile.close();
         testfile.close();
   	}
-  	
-  
+
+
 }
 
 network read_network(char* filename)
@@ -258,56 +251,56 @@ network read_network(char* filename)
     network Alarm;
     string line;
     int find=0;
-    ifstream myfile(filename); 
+    ifstream myfile(filename);
     string temp;
     string name;
     vector<string> values;
-    
+
     if (myfile.is_open())
     {
         while (! myfile.eof() )
         {
             stringstream ss;
             getline (myfile,line);
-            
-            
+
+
             ss.str(line);
             ss>>temp;
-            
-            
+
+
             if(temp.compare("variable")==0)
             {
-                    
+
                     ss>>name;
                     getline (myfile,line);
-                   
+
                     stringstream ss2;
                     ss2.str(line);
                     for(int i=0;i<4;i++)
                     {
-                        
+
                         ss2>>temp;
-                        
-                        
+
+
                     }
                     values.clear();
                     while(temp.compare("};")!=0)
                     {
                         values.push_back(temp);
-                        
+
                         ss2>>temp;
                     }
                     Graph_Node new_node(name,values.size(),values);
                     int pos=Alarm.addNode(new_node);
 
-                    
+
             }
             else if(temp.compare("probability")==0)
             {
-                    
+
                     ss>>temp;
                     ss>>temp;
-                    
+
                     list<Graph_Node>::iterator listIt;
                     list<Graph_Node>::iterator listIt1;
                     listIt=Alarm.search_node(temp);
@@ -319,51 +312,51 @@ network read_network(char* filename)
                         listIt1=Alarm.search_node(temp);
                         listIt1->add_child(index);
                         values.push_back(temp);
-                        
+
                         ss>>temp;
 
                     }
                     listIt->set_Parents(values);
                     getline (myfile,line);
                     stringstream ss2;
-                    
+
                     ss2.str(line);
                     ss2>> temp;
-                    
+
                     ss2>> temp;
-                    
+
                     vector<float> curr_CPT;
                     string::size_type sz;
                     while(temp.compare(";")!=0)
                     {
-                        
+
                         curr_CPT.push_back(atof(temp.c_str()));
-                        
+
                         ss2>>temp;
-                       
-                        
+
+
 
                     }
-                    
+
                     listIt->set_CPT(curr_CPT);
 
 
             }
             else
             {
-                
-            }
-            
-            
 
-            
-            
+            }
+
+
+
+
+
         }
-        
+
         if(find==1)
         myfile.close();
     }
-    
+
     return Alarm;
 }
 
@@ -386,10 +379,5 @@ int main()
    cout <<"Score is "<<score;
 
 	//cout<<Alarm.netSize();
-	
+
 }
-
-
-
-
-

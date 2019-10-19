@@ -29,3 +29,7 @@ network.o: network.cpp network.h Node.h
 clean:
 	rm *.o
 	rm $(OUT)
+
+#form
+form:
+	$(CXX) Format_Checker.cpp -o check
