@@ -79,9 +79,9 @@ int Node::calculate_cpt_index(string node_value, vector<string> &parent_values, 
     for(int i=num_parents-1; i>=0; --i){
         int parent_index_in_network = parent_indices[i];
 
-        Node parent = network_object.graph[i];
-        int curr_value = parent.value_to_int_mapping[parent_values[i]];
-        int max_value = parent.nvalues;
+        Node* parent = &(network_object.graph[parent_index_in_network]);
+        int curr_value = parent->value_to_int_mapping[parent_values[parent_index_in_network]];
+        int max_value = parent->nvalues;
 
         cpt_index += temp*curr_value;
 
@@ -107,22 +107,22 @@ int Node::calculate_cpt_index(string node_value, vector<string> &parent_values, 
 
 
 void Node::print(){
-    // cout << "{ "<<this.Node_Name<<","<<<<" -> " << "( Child: )"
-    // cout << Node_Name<<" "<<Children.size()<<"->";
-    // for(int i=0;i<Children.size();i++){
-    //     cout <<Children[i]<<",";
-    // }
-    // cout << " "<< Parents.size()<<"->";
-    // for(int i=0;i<Parents.size();i++){
-    //     cout << Parents[i]<<",";
-    // }
-    // cout << " "<<nvalues << "->";
-    // for(int i=0;i<values.size();i++){
-    //     cout << values[i]<<",";
-    // }
-    // cout << " ";
-    // for(int i=0;i<CPT.size();i++){
-    //     cout << CPT[i]<<",";
-    // }
-    // cout << endl;
+    cout << "{ "<<this->Node_Name<<","<<" -> " << "( Child: )";
+    cout << Node_Name<<" "<<Children.size()<<"->";
+    for(int i=0;i<Children.size();i++){
+        cout <<Children[i]<<",";
+    }
+    cout << " "<< Parents.size()<<"->";
+    for(int i=0;i<Parents.size();i++){
+        cout << Parents[i]<<",";
+    }
+    cout << " "<<nvalues << "->";
+    for(int i=0;i<values.size();i++){
+        cout << values[i]<<",";
+    }
+    cout << " ";
+    for(int i=0;i<CPT.size();i++){
+        cout<< CPT[i].first<<",";
+    }
+    cout << endl;
 }
