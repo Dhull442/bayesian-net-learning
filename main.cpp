@@ -31,15 +31,12 @@ public:
 
 
 	void update_net(vector< string > sample, double wt){
-		
+
 		int n = sample.size();
 		for(int i=0; i<n; ++i){
-			// cout<<"Bye1"<<endl;
-			// cout<<"Bye"<<endl;
 			Node* node = &(network_to_be_trained->graph[i]);
-			// cout<<i<<endl;
 			int num_parents = node->parent_indices.size();
-			
+
 			vector<string> parent_values(num_parents);
 			for(int j=0; j<num_parents; ++j){
 
@@ -48,14 +45,14 @@ public:
 				parent_values[j] = sample[index_of_jth_parent];
 
 			}
-			
+
 			// cout<<node->values.size()<<endl;
 			vector<string> values_of_node = node->values;
-			
+
 			// cout<<node->values[node->values.size()-1]<<endl;
 			// cout<<sample[i]<<endl;
 			// cout<<node->value_to_int_mapping[sample[i]]<<endl;
-			
+
 			int node_value_number = node->value_to_int_mapping[sample[i]];
 
 			int n2 = values_of_node.size();
@@ -81,19 +78,19 @@ public:
 					(node->CPT[cpt_index]).first += wt;
 				}
 			}
-			
+
 			// cout<<endl;
-			
+
 		}
 
-		
+
 	}
 
 	void train_loop(){
 		for(int i=0;i<missing_values_position.size();i++){
 			// cout<<i<<endl;
 			if(missing_values_position[i]==-1){
-				
+
 				update_net(datf[i],1);
 			}
 			else{
@@ -109,21 +106,21 @@ public:
 				for(int j=0;j<tmp.size();j++){
 					sample[missing_values_position[i]] = network_to_be_trained->graph[missing_values_position[i]].values[j];
 					double wt = tmp[j];
-				
+
 					// cout<<wt<<endl;
-					
+
 					update_net(sample,wt);
-					
+
 				}
 			}
-			
+
 		}
 	}
 
 	void initialise_network_cpt_by_one_sample(vector<string> sample, double sample_weight){
 		// ! Incomplete
 
-		
+
 
 
 	}
@@ -252,8 +249,8 @@ void read_network(network& Alarm,string filename){
 					// 	v = 0.5;
 					// 	// cout << time(0)<<endl;
 					// }
-					double numerator = 1;
-					double denominator  = (double)numvalues;
+					double numerator = 0.001;
+					double denominator  = 0.001*(double)numvalues;
 					curr_CPT.push_back(pdd(numerator, denominator));	//Values given are random only,
 										//hence we make choose intial values from a uniform prior
 					ss2>>temp;

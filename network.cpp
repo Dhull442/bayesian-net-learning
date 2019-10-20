@@ -45,7 +45,9 @@ void network::print_format(string filename){
         file <<") { //"<<v<<" variable(s) and "<<it->CPT.size()<<" values\n";
         file <<"\ttable ";
         for(int i=0;i<it->CPT.size();i++){
-            file << std::fixed << std::setprecision(4) << (double)(it->CPT[i].first)/((it->CPT[i].second))<<" ";
+          double f = (double)(it->CPT[i].first)/((it->CPT[i].second));
+          f = max(f,0.0001);
+          file << std::fixed << std::setprecision(4) << f<<" ";
         }
         file<<";\n}\n";
     }
@@ -64,7 +66,7 @@ vector<double> network::pMarkovian(int node_number, vector<string> &values){
 
     int numChildren = node->Children.size();
 
-    
+
     for(int i=0; i<node->nvalues; ++i){
         values[node_number] = node->values[i];
         // cout<<node->values[i]<<endl;
@@ -119,14 +121,14 @@ vector<double> network::pMarkovian(int node_number, vector<string> &values){
         }
 
         double prob = node_prob * child_prob_product;
-        // cout<<prob<<endl; 
+        // cout<<prob<<endl;
         node_probabilities.push_back(prob);
 
 
     }
 
     //Normalising the values
-    double normalising_constant = 0; 
+    double normalising_constant = 0;
     for(int i=0; i<node_probabilities.size(); ++i){
         normalising_constant += node_probabilities[i];
     }
