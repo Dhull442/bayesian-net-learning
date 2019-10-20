@@ -249,8 +249,10 @@ void read_network(network& Alarm,string filename){
 					// 	v = 0.5;
 					// 	// cout << time(0)<<endl;
 					// }
-					double numerator = 0.001;
-					double denominator  = 0.001*(double)numvalues;
+					double fac =1/DBL_MAX;
+					// cout << fac << endl;
+					double numerator = fac;
+					double denominator  = fac*(double)numvalues;
 					curr_CPT.push_back(pdd(numerator, denominator));	//Values given are random only,
 										//hence we make choose intial values from a uniform prior
 					ss2>>temp;
@@ -277,14 +279,13 @@ int main(int argc, char** argv){
 	// 	Alarm.graph[i].print();
 	// 	cout<<endl;
 	// }
-
-	while(i<10){
+	// int lim = atoi(*argv[3]);
+	// time_t =
+	time_t start = time(0);
+	while(i<10 && time(0) - start <= 100){
 		// Update whole
-		// cout<<"Hi"<<endl;
-		t.train_loop();
-		// cout<<"Bye"<<endl;
-		cout<<i<<endl;
 		++i;
+		t.train_loop();
 	}
 	t.print();
 }
