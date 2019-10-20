@@ -51,6 +51,7 @@ public:
 			
 			// cout<<node->values.size()<<endl;
 			vector<string> values_of_node = node->values;
+			
 			// cout<<node->values[node->values.size()-1]<<endl;
 			// cout<<sample[i]<<endl;
 			// cout<<node->value_to_int_mapping[sample[i]]<<endl;
@@ -65,17 +66,22 @@ public:
 				// cout<<values_of_node[j]<<endl;
 
 				int cpt_index = node->calculate_cpt_index(values_of_node[j], parent_values, *network_to_be_trained);
-				cout<<cpt_index<<endl;
+				// cout<<cpt_index<<endl;
+				// cout<<(node->CPT.size())<<endl;
 				// int cpt_index = 0;
+				// cout<<wt<<endl;
+				assert(cpt_index < (node->CPT.size()));
+
 
 				// cout<<(node->CPT[cpt_index]).first<<" "<<(node->CPT[cpt_index]).second<<endl;
-
+				// cout<<wt<<endl;
 				(node->CPT[cpt_index]).second += wt;
 
 				if(node_value_number == j + 1){
 					(node->CPT[cpt_index]).first += wt;
 				}
 			}
+			
 			// cout<<endl;
 			
 		}
@@ -91,9 +97,9 @@ public:
 				update_net(datf[i],1);
 			}
 			else{
-				cout<<"Hi"<<endl;
+				// cout<<"Hi"<<endl;
 				vector< double > tmp = network_to_be_trained->pMarkovian(missing_values_position[i],datf[i]);
-				cout<<"Hi2"<<endl;
+				// cout<<"Hi2"<<endl;
 				vector<string> sample = datf[i];
 				// for(int l=0; l<sample.size(); ++l){
 				// 		cout<<sample[l]<<" 0 ";
@@ -102,7 +108,7 @@ public:
 				assert(network_to_be_trained->graph[missing_values_position[i]].values.size() == tmp.size());
 				for(int j=0;j<tmp.size();j++){
 					sample[missing_values_position[i]] = network_to_be_trained->graph[missing_values_position[i]].values[j];
-					int wt = tmp[j];
+					double wt = tmp[j];
 				
 					// cout<<wt<<endl;
 					
@@ -269,18 +275,18 @@ int main(int argc, char** argv){
 	training_input_reader t(datFile,Alarm);
 	int i=0;
 
-	cout<<"Here"<<endl;
-	for(int i=0; i<Alarm.graph.size(); ++i){
-		Alarm.graph[i].print();
-		cout<<endl;
-	}
+	// cout<<"Here"<<endl;
+	// for(int i=0; i<Alarm.graph.size(); ++i){
+	// 	Alarm.graph[i].print();
+	// 	cout<<endl;
+	// }
 
 	while(i<10){
 		// Update whole
 		// cout<<"Hi"<<endl;
 		t.train_loop();
 		// cout<<"Bye"<<endl;
-		// cout<<i<<endl;
+		cout<<i<<endl;
 		++i;
 	}
 	t.print();

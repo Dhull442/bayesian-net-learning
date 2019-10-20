@@ -72,7 +72,7 @@ int Node::add_child(int new_child_index )
 
 // Given the values of parents and the network object, return the relevant cpt_index
 int Node::calculate_cpt_index(string node_value, vector<string> &parent_values, network &network_object){
-    int cpt_index = 0;
+    int cpt_index = 1;
     int num_parents = parent_values.size();
     int temp = 1;
 
@@ -80,10 +80,10 @@ int Node::calculate_cpt_index(string node_value, vector<string> &parent_values, 
         int parent_index_in_network = parent_indices[i];
 
         Node* parent = &(network_object.graph[parent_index_in_network]);
-        int curr_value = parent->value_to_int_mapping[parent_values[parent_index_in_network]];
+        int curr_value = parent->value_to_int_mapping[parent_values[i]];
         int max_value = parent->nvalues;
 
-        cpt_index += temp*curr_value;
+        cpt_index += temp*(curr_value-1);
 
         temp *= max_value;
 
@@ -94,7 +94,7 @@ int Node::calculate_cpt_index(string node_value, vector<string> &parent_values, 
     int curr_value = value_to_int_mapping[node_value];
     int max_value = nvalues;
 
-    cpt_index += temp*curr_value;
+    cpt_index += temp*(curr_value-1);
 
     return cpt_index - 1; // Subtracting 1 because the actual index should start from 0
 
